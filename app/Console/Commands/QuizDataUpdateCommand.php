@@ -41,13 +41,5 @@ class QuizDataUpdateCommand extends Command
     {
         $quizUpdateService = new QuizDataUpdateService();
         $quizUpdateService->updateQuizData();
-        $response = Http::get('https://quizapi.io/api/v1/questions', [
-            'apiKey' => config('services.quizApi.key'),
-            'limit' => 10,
-        ]);
-
-        dd(json_decode($response->body()));
-
-        return 0;
     }
 }
