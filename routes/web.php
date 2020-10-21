@@ -18,5 +18,3 @@ use App\Http\Controllers\QuizDataUpdateController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/quizDataUpdate', [QuizDataUpdateController::class, 'update'])->name('quizDataUpdateRoute');
