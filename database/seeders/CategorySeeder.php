@@ -14,7 +14,7 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        $categoryNames = (new Category())->getCategories();
+        $categoryNames = Category::AVAILABLE_CATEGORIES;
 
         foreach ($categoryNames as $name) {
             $newCategory = new Category;

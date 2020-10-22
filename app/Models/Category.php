@@ -12,7 +12,7 @@ class Category extends Model
     /**
      * Define all categories that wil be called from QuizApi
      */
-    private array $availableCategories = [
+    const AVAILABLE_CATEGORIES = [
         'Linux',
         'Bash',
         'Docker',
@@ -30,10 +30,4 @@ class Category extends Model
     protected $fillable = [
         'name',
     ];
-
-
-    public function getCategories()
-    {
-        return $this->availableCategories;
-    }
 }
