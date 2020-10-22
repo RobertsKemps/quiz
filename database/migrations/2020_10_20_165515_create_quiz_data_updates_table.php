@@ -15,7 +15,6 @@ class CreateQuizDataUpdatesTable extends Migration
     {
         Schema::create('quiz_data_updates', function (Blueprint $table) {
             $table->id();
-            $table->integer('difficultyId')->unsigned();
             $table->integer('categoryId')->unsigned();
             $table->text('response');
             $table->integer('statusCode');
