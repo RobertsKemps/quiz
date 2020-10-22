@@ -10,6 +10,19 @@ class Category extends Model
     use HasFactory;
 
     /**
+     * Define all categories that wil be called from QuizApi
+     */
+    private array $availableCategories = [
+        'Linux',
+        'Bash',
+        'Docker',
+        'SQL',
+        'CMS',
+        'Code',
+        'DevOPS',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -17,4 +30,10 @@ class Category extends Model
     protected $fillable = [
         'name',
     ];
+
+
+    public function getCategories()
+    {
+        return $this->availableCategories;
+    }
 }
