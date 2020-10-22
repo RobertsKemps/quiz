@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Answer;
-use App\Models\Difficulty;
+use App\Models\Category;
 use App\Models\Question;
 use App\Models\QuizDataUpdate;
 use Illuminate\Support\Facades\Http;
@@ -14,36 +14,70 @@ class QuizDataUpdateService
 {
     private string $quizApiKey;
     private int $questionAmount;
-    private QuizDataUpdate $quizDataModel;
-    private Answer $answerModel;
-    private Difficulty $difficultyModel;
-    private Question $questionModel;
+    private Category $categoryModel;
 
     public function __construct()
     {
         $this->quizApiKey = config('services.quizApi.key');
-        $this->questionAmount = 20;
-        $this->quizDataModel = new QuizDataUpdate();
-        $this->answerModel = new Answer();
-        $this->difficultyModel = new Difficulty();
-        $this->questionModel = new Question();
+        $this->questionAmount = 1;
+        $this->categoryModel = null;
     }
 
-    public function updateQuizData()
+    /**
+     * Calls QuizApi questions endpoint and returns questions
+     *
+     * @param string $categories
+     * @return void
+     */
+    public function updateQuizData(string $category): void
     {
+        if ('' == $category) {
+            return;
+        }
 
+        $this->categoryModel = Category::where('name', $category)->first();
+
+        if ($this->categoryModel instanceof Category) {
+            return;
+        }
 
         $response = Http::get('https://quizapi.io/api/v1/questions', [
             'apiKey' => $this->quizApiKey,
+            'category' => $category,
             'limit' => $this->questionAmount,
         ]);
 
         $responseJson = json_decode($response->body());
 
-        foreach ($responseJson as $question) {
-            dd($question);
+        foreach ($responseJson as $response) {
+            $question = $this->saveQuestion($response);
+            $ans
         }
+    }
 
-        return 0;
+    /**
+     * Saves and returns question model
+     *
+     * @param object $response
+     * @return Question
+     */
+    private function saveQuestion(object $response): Question
+    {
+        $question = new Question();
+        $question->categoryId = $this->categoryModel->id;
+        $question->text = $response->question;
+        $question->save();
+
+        return $question;
+    }
+
+    private function saveRequestAnswers(object $response, Question $question): void
+    {
+        foreach ($response->answers as $answer) {
+            $answer = new Question();
+            $answer->categoryId = $this->categoryModel->id;
+            $answer->text = $response->question;
+            $answer->save();
+        }
     }
 }

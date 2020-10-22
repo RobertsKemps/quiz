@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\Services\QuizDataUpdateService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
+use App\Models\Category;
 
 class QuizDataUpdateCommand extends Command
 {
+    private array $categories = Category::AVAILABLE_CATEGORIES;
+
     /**
      * The name and signature of the console command.
      *
@@ -40,6 +42,9 @@ class QuizDataUpdateCommand extends Command
     public function handle()
     {
         $quizUpdateService = new QuizDataUpdateService();
-        $quizUpdateService->updateQuizData();
+
+        foreach ($this->categories as $categorie) {
+            $quizUpdateService->updateQuizData($categorie);
+        }
     }
 }
