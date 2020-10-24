@@ -32,5 +32,6 @@ return [
 
     'quizApi' => [
         'key' => env('QUIZ_API_TOKEN'),
+        'questionsPerApiCall' => 10,
     ],
 ];

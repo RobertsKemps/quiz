@@ -19,8 +19,7 @@ class QuizDataUpdateService
     public function __construct()
     {
         $this->quizApiKey = config('services.quizApi.key');
-        $this->questionAmount = 1;
-        $this->categoryModel = null;
+        $this->questionAmount = config('services.quizApi.questionsPerApiCall');
     }
 
     /**
@@ -37,7 +36,7 @@ class QuizDataUpdateService
 
         $this->categoryModel = Category::where('name', $category)->first();
 
-        if ($this->categoryModel instanceof Category) {
+        if (!$this->categoryModel instanceof Category) {
             return;
         }
 
@@ -51,12 +50,12 @@ class QuizDataUpdateService
 
         foreach ($responseJson as $response) {
             $question = $this->saveQuestion($response);
-            $ans
+            $this->saveRequestAnswers($response, $question);
         }
     }
 
     /**
-     * Saves and returns question model
+     * Saves and returns Question model
      *
      * @param object $response
      * @return Question
@@ -71,12 +70,27 @@ class QuizDataUpdateService
         return $question;
     }
 
+    /**
+     * Saves answer from request
+     *
+     * @param object $response
+     * @param Question $question
+     * @return void
+     */
     private function saveRequestAnswers(object $response, Question $question): void
     {
-        foreach ($response->answers as $answer) {
-            $answer = new Question();
-            $answer->categoryId = $this->categoryModel->id;
+        foreach ($response->answers as $key => $answer) {
+            $correctAnswerKey = $key . '_correct';
+            if (!$correctAnswerKey) {
+                continue;
+            }
+
+            $isAnswerRight = $response->correct_answers->$correctAnswerKey;
+
+            $answer = new Answer();
+            $answer->questionId = $question->id;
             $answer->text = $response->question;
+            $answer->isRight = filter_var($isAnswerRight, FILTER_VALIDATE_BOOLEAN);
             $answer->save();
         }
     }
