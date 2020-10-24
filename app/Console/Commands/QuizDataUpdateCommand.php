@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\QuizDataUpdateService;
 use Illuminate\Console\Command;
 use App\Models\Category;
+use App\Models\QuizDataUpdate;
 
 class QuizDataUpdateCommand extends Command
 {
@@ -42,9 +43,16 @@ class QuizDataUpdateCommand extends Command
     public function handle()
     {
         $quizUpdateService = new QuizDataUpdateService();
+        $quizDataUpdate = new QuizDataUpdate();
 
         foreach ($this->categories as $categorie) {
-            $quizUpdateService->updateQuizData($categorie);
+            $quizUpdateDataRow = $quizUpdateService->updateQuizData($categorie);
+
+            if (is_array($quizUpdateDataRow)) {
+                $quizDataUpdate->fill($quizUpdateDataRow);
+            }
         }
+
+        $quizDataUpdate->save();
     }
 }
