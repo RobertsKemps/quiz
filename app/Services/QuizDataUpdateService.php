@@ -55,7 +55,7 @@ class QuizDataUpdateService
             }
 
             $question = Question::saveQuestionFromApiRequest($response, $this->categoryModel);
-            Answer::saveAnswerFromApiRequest($response, $question);
+            Answer::saveAnswersFromApiRequest($response, $question);
             $updatedQuestionAmount++;
         }
 
